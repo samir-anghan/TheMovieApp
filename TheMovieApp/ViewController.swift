@@ -12,7 +12,10 @@ class ViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view.
+        
+        API.getMovies(page: 1) { movies in
+            print(movies)
+        }
     }
 
 
