@@ -2,7 +2,7 @@
 //  AppDelegate.swift
 //  TheMovieApp
 //
-//  Created by Dev on 10/16/19.
+//  Created by Samir on 10/16/19.
 //  Copyright © 2019 Samir Anghan. All rights reserved.
 //
 
