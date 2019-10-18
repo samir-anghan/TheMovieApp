@@ -12,8 +12,11 @@ class MainViewController: UIViewController {
     
     @IBOutlet weak var movieListTableView: UITableView!
     @IBOutlet weak var tableViewActivityIndicator: UIActivityIndicatorView!
+    @IBOutlet weak var searchBar: UISearchBar!
     
     private var viewModel: MovieListViewModel?
+    
+    private var initialSearchString = ""
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -22,8 +25,20 @@ class MainViewController: UIViewController {
         viewModel?.delegate = self
         viewModel?.fetchMovies()
         setupTableView()
+        setupSearchBar()
     }
 
+    private func setupSearchBar() {
+        searchBar.delegate = self
+        
+        if initialSearchString != "" {
+            searchBar.text = initialSearchString
+            viewModel?.search(terms: initialSearchString, debounced: false)
+            searchBar.isLoading = true
+        }
+        
+        searchBar.becomeFirstResponder()
+    }
 }
 
 // MARK: - UITableViewDelegate
@@ -42,12 +57,12 @@ extension MainViewController: UITableViewDelegate {
 // MARK: - UITableViewDataSource
 extension MainViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return viewModel?.dataSource.count ?? 0
+        return viewModel?.dataToDisplay.count ?? 0
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: MovieListTableViewCell.reuseIdentifier) as? MovieListTableViewCell,
-            let movie = viewModel?.dataSource[indexPath.row]
+            let movie = viewModel?.dataToDisplay[indexPath.row]
             else { return UITableViewCell() }
         
         cell.config(movie: movie)
@@ -67,4 +82,13 @@ extension MainViewController: MovieListViewModelDelegate {
     }
 }
 
-
+// MARK: - UISearchBarDelegate
+extension MainViewController: UISearchBarDelegate {
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        let query = searchText.trimmingCharacters(in: .whitespacesAndNewlines)
+        
+        guard query.count > 2 else { return }
+        
+        viewModel?.search(terms: query)
+    }
+}

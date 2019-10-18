@@ -24,6 +24,10 @@ class MovieListTableViewCell: UITableViewCell {
         super.awakeFromNib()
         // Initialization code
     }
+    
+    override func prepareForReuse() {
+        posterImageView.image = UIImage(named: "placeholder")
+    }
 
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
@@ -36,7 +40,8 @@ class MovieListTableViewCell: UITableViewCell {
         self.titleLabel.text = movie.title
         self.overviewLabel.text = movie.overview
         
-         guard let moviePosterUrl = URL(string: "http://image.tmdb.org/t/p/w500\(movie.posterPath)") else { return }
+         guard let posterPath = movie.posterPath,
+            let moviePosterUrl = URL(string: "http://image.tmdb.org/t/p/w500\(posterPath)") else { return }
         
         let resource = ImageResource(downloadURL: moviePosterUrl, cacheKey: movie.title)
         posterImageView.kf.indicatorType = .activity

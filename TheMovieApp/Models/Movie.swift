@@ -13,13 +13,13 @@ struct Movie: Decodable {
     let popularity: Double
     let totalVotes: Int
     let hasVideo: Bool
-    let posterPath: String
+    let posterPath: String?
     let isAdult: Bool
     let language: String
     let title: String
     let voteAverage: Double
     let overview: String
-    let releaseDate: String
+    let releaseDate: String?
     
     private enum CodingKeys: String, CodingKey {
         case id, popularity, title, overview

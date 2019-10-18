@@ -1,61 +1,53 @@
 //
-//  MovieAPI.swift
+//  DiscoverMovieAPI.swift
 //  TheMovieApp
 //
-//  Created by Samir on 10/17/19.
+//  Created by Samir  on 10/17/19.
 //  Copyright © 2019 Samir Anghan. All rights reserved.
 //
 
 import Foundation
 import Moya
 
-enum MovieApi {
-    case reco(id:Int)
-    case topRated(page:Int)
-    case newMovies(page:Int)
-    case video(id:Int)
+enum MovieAPI {
+    case discover(page:Int)
+    case search(query: String)
 }
 
-extension MovieApi: TargetType {
+extension MovieAPI: TargetType {
     var baseURL: URL {
-        guard let url = URL(string: "https://api.themoviedb.org/3/discover/movie/") else { fatalError("baseURL could not be configured") }
+        guard let url = URL(string: "https://api.themoviedb.org/3/") else { fatalError("baseURL could not be configured") }
         return url
     }
     
     var path: String {
         switch self {
-        case .reco(let id):
-            return "\(id)/recommendations"
-        case .topRated:
-            return "popular"
-        case .newMovies:
-            return "now_playing"
-        case .video(let id):
-            return "\(id)/videos"
+        case .discover:
+            return "discover/movie"
+        case .search:
+            return "search/movie"
         }
+        
     }
     
     var method: Moya.Method {
         switch self {
-        case .reco, .topRated, .newMovies, .video:
+        case .discover, .search:
             return .get
         }
     }
     
     var parameters: [String : Any]? {
         switch self {
-        case .reco, .video:
-            return ["api_key": API.apiKey]
-        case .topRated(let page), .newMovies(let page):
-            return ["page": page, "api_key": API.apiKey]
+        case .discover(let page):
+            return ["api_key": API.apiKey, "page": page]
+        case .search(let query):
+            return ["api_key": API.apiKey, "query": query]
         }
     }
     
     var parameterEncoding: ParameterEncoding {
-        switch self {
-        case .reco, .topRated, .newMovies, .video:
-            return URLEncoding.queryString
-        }
+        return URLEncoding.queryString
     }
     
     var sampleData: Data {
@@ -63,15 +55,11 @@ extension MovieApi: TargetType {
     }
     
     var task: Task {
-        switch self {
-        case .reco, .topRated, .newMovies, .video:
-            return .requestPlain
-        }
+        return .requestParameters(parameters: parameters!, encoding: parameterEncoding)
     }
     
     var headers: [String : String]? {
         return nil
     }
+    
 }
-
-
