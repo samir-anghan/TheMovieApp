@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="15400" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
+    <device id="retina6_1" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15404"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--Main View Controller-->
+        <scene sceneID="tne-QT-ifu">
+            <objects>
+                <viewController id="BYZ-38-t0r" customClass="MainViewController" customModule="TheMovieApp" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="tSZ-Am-OEa">
+                                <rect key="frame" x="0.0" y="44" width="414" height="818"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                            </tableView>
+                            <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="large" translatesAutoresizingMaskIntoConstraints="NO" id="VHV-be-6NV">
+                                <rect key="frame" x="0.0" y="44" width="414" height="818"/>
+                            </activityIndicatorView>
+                        </subviews>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                        <constraints>
+                            <constraint firstItem="VHV-be-6NV" firstAttribute="bottom" secondItem="tSZ-Am-OEa" secondAttribute="bottom" id="1Tu-PV-bhr"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="tSZ-Am-OEa" secondAttribute="bottom" id="8EL-bu-fGa"/>
+                            <constraint firstItem="tSZ-Am-OEa" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="MVk-xf-LGp"/>
+                            <constraint firstItem="VHV-be-6NV" firstAttribute="trailing" secondItem="tSZ-Am-OEa" secondAttribute="trailing" id="ZzP-sv-8qH"/>
+                            <constraint firstItem="tSZ-Am-OEa" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" id="hNp-wC-sH3"/>
+                            <constraint firstItem="VHV-be-6NV" firstAttribute="top" secondItem="tSZ-Am-OEa" secondAttribute="top" id="jw1-Wf-MVk"/>
+                            <constraint firstItem="VHV-be-6NV" firstAttribute="leading" secondItem="tSZ-Am-OEa" secondAttribute="leading" id="k7F-Om-cDW"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="tSZ-Am-OEa" secondAttribute="trailing" id="lfb-ex-cqE"/>
+                        </constraints>
+                        <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
+                    </view>
+                    <connections>
+                        <outlet property="movieListTableView" destination="tSZ-Am-OEa" id="qyk-vk-Ptd"/>
+                        <outlet property="tableViewActivityIndicator" destination="VHV-be-6NV" id="YVY-jr-h5R"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="132" y="118"/>
+        </scene>
+    </scenes>
+</document>
