@@ -36,21 +36,13 @@ class MainViewController: UIViewController {
             viewModel?.search(terms: initialSearchString, debounced: false)
             searchBar.isLoading = true
         }
-        
-        searchBar.becomeFirstResponder()
     }
-}
-
-// MARK: - UITableViewDelegate
-extension MainViewController: UITableViewDelegate {
-    private func setupTableView() {
-        movieListTableView.register(UINib(nibName: "MovieListTableViewCell", bundle: nil), forCellReuseIdentifier: MovieListTableViewCell.reuseIdentifier)
-       
-        movieListTableView.estimatedRowHeight = 150
-        movieListTableView.rowHeight = 150
-        
-        movieListTableView.delegate = self
-        movieListTableView.dataSource = self
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+         if let destination = segue.destination as? MovieDetailTableViewController {
+            guard let movie = sender as? Movie else { return }
+            destination.viewModel = MovieDetailViewModel(movie: movie)
+        }
     }
 }
 
@@ -67,6 +59,24 @@ extension MainViewController: UITableViewDataSource {
         
         cell.config(movie: movie)
         return cell
+    }
+}
+
+// MARK: - UITableViewDelegate
+extension MainViewController: UITableViewDelegate {
+    private func setupTableView() {
+        movieListTableView.register(UINib(nibName: "MovieListTableViewCell", bundle: nil), forCellReuseIdentifier: MovieListTableViewCell.reuseIdentifier)
+       
+        movieListTableView.estimatedRowHeight = 150
+        movieListTableView.rowHeight = 150
+        
+        movieListTableView.delegate = self
+        movieListTableView.dataSource = self
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
+        performSegue(withIdentifier: "detailViewSegue", sender: viewModel?.dataToDisplay[indexPath.row])
     }
 }
 
