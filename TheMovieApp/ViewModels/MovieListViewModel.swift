@@ -45,7 +45,6 @@ class MovieListViewModel {
         } else {
             self.searchRequest()
         }
-        
     }
     
     private func searchRequest() {

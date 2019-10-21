@@ -9,26 +9,34 @@
 import UIKit
 import Kingfisher
 import SwiftyStarRatingView
+import RealmSwift
 
 class MovieDetailTableViewController: UITableViewController {
     
-    @IBOutlet weak var titleLabel: UILabel!
     @IBOutlet weak var posterImageView: UIImageView!
     @IBOutlet weak var starRatingView: SwiftyStarRatingView!
     @IBOutlet weak var ratingLabel: UILabel!
     @IBOutlet weak var votesLabel: UILabel!
     @IBOutlet weak var releaseDateLabel: UILabel!
     @IBOutlet weak var overviewLabel: UILabel!
+    @IBOutlet weak var addToFavouriteButton: UIButton!
+    @IBOutlet weak var emptyReviewView: UIView!
+    @IBOutlet weak var reviewView: UIView!
+    @IBOutlet weak var reviewRating: SwiftyStarRatingView!
+    @IBOutlet weak var reviewTitleLabel: UILabel!
+    @IBOutlet weak var reviewLabel: UILabel!
+    @IBOutlet var detailsTableView: UITableView!
     
     var viewModel: MovieDetailViewModel?
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        detailsTableView.delegate = self
         guard let vm = viewModel else { return }
         
         let movie = vm.movie
-        titleLabel.text = movie.title
+        self.title = movie.title
         overviewLabel.text = movie.overview
         
         let rating = CGFloat(ceil(movie.voteAverage / 2))
@@ -36,6 +44,8 @@ class MovieDetailTableViewController: UITableViewController {
         ratingLabel.text = "\(rating)/5"
         votesLabel.text = "(\(movie.totalVotes) votes)"
         releaseDateLabel.text = DateStringFormatter.format(dateString: movie.releaseDate ?? "N/A")
+        
+        updateUI()
         
         guard let posterPath = movie.posterPath,
             let moviePosterUrl = URL(string: "http://image.tmdb.org/t/p/w500\(posterPath)") else { return }
@@ -45,71 +55,79 @@ class MovieDetailTableViewController: UITableViewController {
         posterImageView.kf.setImage(with: resource)
     }
     
-    // MARK: - Table view data source
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        updateUI()
+        guard let vm = viewModel else { return }
+        
+        if vm.hasReview() {
+            displayReview()
+        }
+    }
     
-//    override func numberOfSections(in tableView: UITableView) -> Int {
-//        // #warning Incomplete implementation, return the number of sections
-//        return 0
-//    }
-//
-//    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-//        // #warning Incomplete implementation, return the number of rows
-//        return 0
-//    }
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if let destination = segue.destination as? AddReviewTableViewController {
+            guard let movie = viewModel?.movie else { return }
+            destination.viewModel = ReviewMovieViewModel(movie: movie)
+        }
+    }
     
-    /*
-     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-     let cell = tableView.dequeueReusableCell(withIdentifier: "reuseIdentifier", for: indexPath)
-     
-     // Configure the cell...
-     
-     return cell
-     }
-     */
+    @IBAction func toggleFavourite(_ sender: UIButton) {
+        guard let vm = viewModel else { return }
+        
+        let movie = vm.movie
+        
+        if vm.isFavourite() {
+            StorageManager.shared.removeFromFavouriteMovies(movie: movie)
+        } else {
+            StorageManager.shared.add(FavouriteMovie(movie: movie))
+        }
+        
+        updateUI()
+    }
     
-    /*
-     // Override to support conditional editing of the table view.
-     override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-     // Return false if you do not want the specified item to be editable.
-     return true
-     }
-     */
+    private func updateUI() {
+        guard let vm = viewModel else { return }
+        
+        addToFavouriteButton.setTitle(vm.isFavourite() ? "Remove from my favourite list" : "Add to my favourite list", for: .normal)
+        
+        emptyReviewView.isHidden = vm.hasReview()
+        reviewView.isHidden = !vm.hasReview()
+    }
     
-    /*
-     // Override to support editing the table view.
-     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-     if editingStyle == .delete {
-     // Delete the row from the data source
-     tableView.deleteRows(at: [indexPath], with: .fade)
-     } else if editingStyle == .insert {
-     // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-     }
-     }
-     */
+    private func displayReview() {
+        guard let vm = viewModel,
+            vm.hasReview() else { return }
+        
+        let review = StorageManager.shared.getMovieReview(movieId: vm.movie.id)
+        
+        if let rating = review?.rating, let title = review?.title, let reviewText = review?.review {
+            reviewRating.value = rating
+            reviewTitleLabel.text = title
+            reviewLabel.text = reviewText
+        } else {
+            reviewTitleLabel.text = "N/A"
+            reviewLabel.text = "N/A"
+        }
+    }
     
-    /*
-     // Override to support rearranging the table view.
-     override func tableView(_ tableView: UITableView, moveRowAt fromIndexPath: IndexPath, to: IndexPath) {
-     
-     }
-     */
-    
-    /*
-     // Override to support conditional rearranging of the table view.
-     override func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
-     // Return false if you do not want the item to be re-orderable.
-     return true
-     }
-     */
-    
-    /*
-     // MARK: - Navigation
-     
-     // In a storyboard-based application, you will often want to do a little preparation before navigation
-     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-     // Get the new view controller using segue.destination.
-     // Pass the selected object to the new view controller.
-     }
-     */
-    
+    private func loadImageFromPath(path: String) -> UIImage? {
+        guard let fileURL = StorageManager.shared.documentsUrl?.appendingPathComponent(path) else { return nil }
+        
+        do {
+            let imageData = try Data(contentsOf: fileURL)
+            return UIImage(data: imageData)
+        } catch {
+            print("Error loading image : \(error)")
+        }
+        return nil
+    }
+}
+
+// MARK: - UITableViewDelegate
+extension MovieDetailTableViewController {
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
+    }
 }

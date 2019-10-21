@@ -19,28 +19,24 @@ class MovieListTableViewCell: UITableViewCell {
     @IBOutlet weak var overviewLabel: UILabel!
     @IBOutlet weak var starRatingView: SwiftyStarRatingView!
     
- 
+    
     override func awakeFromNib() {
         super.awakeFromNib()
-        // Initialization code
     }
     
     override func prepareForReuse() {
         posterImageView.image = UIImage(named: "placeholder")
     }
-
+    
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
-
-        // Configure the view for the selected state
     }
     
     func config(movie: Movie) {
-        
         self.titleLabel.text = movie.title
         self.overviewLabel.text = movie.overview
         
-         guard let posterPath = movie.posterPath,
+        guard let posterPath = movie.posterPath,
             let moviePosterUrl = URL(string: "http://image.tmdb.org/t/p/w500\(posterPath)") else { return }
         
         let resource = ImageResource(downloadURL: moviePosterUrl, cacheKey: movie.title)
@@ -49,5 +45,4 @@ class MovieListTableViewCell: UITableViewCell {
         
         starRatingView.value = CGFloat(ceil(movie.voteAverage / 2))       
     }
-    
 }

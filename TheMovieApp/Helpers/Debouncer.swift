@@ -50,5 +50,4 @@ class Debouncer {
         handler?()
         handler = nil
     }
-    
 }

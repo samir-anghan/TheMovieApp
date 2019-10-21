@@ -10,7 +10,6 @@ import Foundation
 import Moya
 
 class API {
-    
     static let apiKey = "dcc0f5566ff241db4235901f3490e304"
     static let provider = MoyaProvider<MovieAPI>(plugins: [NetworkLoggerPlugin(verbose: true)])
     
@@ -25,7 +24,7 @@ class API {
                     print("Error decoding movies data: \(error)")
                 }
             case .failure(let error):
-                 print("Network request error: \(error)")
+                print("Network request error: \(error)")
             }
         }
     }
@@ -41,7 +40,7 @@ class API {
                     print("Error decoding search movies data: \(error)")
                 }
             case .failure(let error):
-                 print("Network request error: \(error)")
+                print("Network request error: \(error)")
             }
         }
     }

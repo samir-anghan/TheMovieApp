@@ -27,7 +27,6 @@ extension MovieAPI: TargetType {
         case .search:
             return "search/movie"
         }
-        
     }
     
     var method: Moya.Method {
@@ -61,5 +60,4 @@ extension MovieAPI: TargetType {
     var headers: [String : String]? {
         return nil
     }
-    
 }

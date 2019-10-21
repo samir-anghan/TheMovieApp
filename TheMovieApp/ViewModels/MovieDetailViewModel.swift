@@ -14,4 +14,15 @@ class MovieDetailViewModel {
     init(movie: Movie) {
         self.movie = movie
     }
+    
+    func isFavourite() -> Bool {
+        let isFavourite = StorageManager.shared.getFavouriteMovies().contains(where: { (favouriteMovie) -> Bool in
+            return favouriteMovie.id == movie.id
+        })
+        return isFavourite
+    }
+    
+    func hasReview() -> Bool {
+        return StorageManager.shared.getMovieReview(movieId: movie.id) != nil
+    }
 }

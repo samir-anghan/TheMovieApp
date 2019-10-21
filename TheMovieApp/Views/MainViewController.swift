@@ -27,7 +27,7 @@ class MainViewController: UIViewController {
         setupTableView()
         setupSearchBar()
     }
-
+    
     private func setupSearchBar() {
         searchBar.delegate = self
         
@@ -39,9 +39,10 @@ class MainViewController: UIViewController {
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-         if let destination = segue.destination as? MovieDetailTableViewController {
+        if let destination = segue.destination as? MovieDetailTableViewController {
             guard let movie = sender as? Movie else { return }
             destination.viewModel = MovieDetailViewModel(movie: movie)
+            destination.hidesBottomBarWhenPushed = true
         }
     }
 }
@@ -66,12 +67,13 @@ extension MainViewController: UITableViewDataSource {
 extension MainViewController: UITableViewDelegate {
     private func setupTableView() {
         movieListTableView.register(UINib(nibName: "MovieListTableViewCell", bundle: nil), forCellReuseIdentifier: MovieListTableViewCell.reuseIdentifier)
-       
+        
         movieListTableView.estimatedRowHeight = 150
         movieListTableView.rowHeight = 150
         
         movieListTableView.delegate = self
         movieListTableView.dataSource = self
+        movieListTableView.keyboardDismissMode = .onDrag
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -95,8 +97,11 @@ extension MainViewController: MovieListViewModelDelegate {
 // MARK: - UISearchBarDelegate
 extension MainViewController: UISearchBarDelegate {
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        let query = searchText.trimmingCharacters(in: .whitespacesAndNewlines)
+        if searchText == "" {
+            viewModel?.fetchMovies()
+        }
         
+        let query = searchText.trimmingCharacters(in: .whitespacesAndNewlines)
         guard query.count > 2 else { return }
         
         viewModel?.search(terms: query)

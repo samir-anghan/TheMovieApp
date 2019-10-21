@@ -12,15 +12,15 @@ import UIKit
 /**
  Usage
  =====
-
+ 
  To show the acttivity indicator:
-    searchController.searchBar.isLoading = true
-
+ searchController.searchBar.isLoading = true
+ 
  To stop the activity indicator (assuming it will be called when a network or extensive block is finished):
-    DispatchQueue.main.async {
-        searchController.searchBar.isLoading = false
-    }
-*/
+ DispatchQueue.main.async {
+ searchController.searchBar.isLoading = false
+ }
+ */
 extension UISearchBar {
     private var textField: UITextField? {
         let subViews = self.subviews.flatMap { $0.subviews }
@@ -53,4 +53,3 @@ extension UISearchBar {
         }
     }
 }
-

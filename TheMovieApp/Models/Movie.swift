@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import RealmSwift
 
 struct Movie: Decodable {
     let id: Int!
@@ -30,5 +31,21 @@ struct Movie: Decodable {
         case language = "original_language"
         case voteAverage = "vote_average"
         case releaseDate = "release_date"
+    }
+}
+
+class FavouriteMovie: Object {
+    @objc dynamic var id: Int = 0
+    @objc dynamic var title: String = ""
+    
+    override class func primaryKey() -> String? {
+        return "id"
+    }
+    
+    convenience init(movie: Movie) {
+        self.init()
+        
+        id = movie.id
+        title = movie.title
     }
 }
