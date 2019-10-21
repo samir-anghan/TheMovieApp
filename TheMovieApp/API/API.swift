@@ -10,7 +10,7 @@ import Foundation
 import Moya
 
 class API {
-    static let apiKey = "dcc0f5566ff241db4235901f3490e304"
+    static let apiKey = "Add Your API Key Here"
     static let provider = MoyaProvider<MovieAPI>(plugins: [NetworkLoggerPlugin(verbose: true)])
     
     static func getMovies(page: Int, completion: @escaping ([Movie])->()) {
